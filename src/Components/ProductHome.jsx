@@ -15,11 +15,11 @@ function ProductHome(props) {
     
 
     const fetchData = async () => {
-        let response = await fetch('http://localhost:3000/products');
-
-        try {
+           try {
+        let response = await fetch('https://dummyjson.com/products');
             let data = await response.json();
-            return setProduct(data);
+            console.log(data);
+            return setProduct(data?.products);
         }
         catch (error) {
             console.log(error.message)
