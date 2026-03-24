@@ -41,5 +41,19 @@ export const ProductSlice = createSlice({
 
 });
 
+export const AllProductSlice = createSlice({
+    name: "product",
+    initialState: {
+        productData: []
+    },
+    reducers: {
+        addAll: (state, action) => {
+            state.productData = action.payload;
+        }
+    }
+});
+
+export const { addAll } = AllProductSlice.actions;
+
 export default ProductSlice.reducer;
 export const{ addToProduct, deleteToProduct, removeToProduct, searchProductData } = ProductSlice.actions;

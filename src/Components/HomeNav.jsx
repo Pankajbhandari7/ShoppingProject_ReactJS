@@ -77,9 +77,9 @@ function HomeNav(props) {
                             <Navbar.Brand>
                                 <NavLink to='/' style={{ textDecoration: "none" }}> Home </NavLink>
                             </Navbar.Brand>
-                            <Navbar.Brand>
-                                <NavLink to='/product-detail' style={{ textDecoration: "none" }}> Product Details </NavLink>
-                            </Navbar.Brand>
+                            {/* <Navbar.Brand>
+                                <NavLink to='/product-detail/:id' style={{ textDecoration: "none" }}> Product Details </NavLink>
+                            </Navbar.Brand> */}
                         </Nav>
                         <Form className="d-flex">
                             <Form.Control

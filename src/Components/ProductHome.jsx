@@ -1,30 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToProduct } from '../Redux/Slices/ProductSlice';
+import { addAll } from '../Redux/Slices/ProductSlice';
+import { useNavigate } from 'react-router';
 
 function ProductHome(props) {
     const [radioData, setRadioData] = useState("All");
     const [product, setProduct] = useState([]);
-
+  const navigate = useNavigate();
     let dispatch = useDispatch();
 
-    let searchData = useSelector((state)=> state.cart.searchData);
+    let searchData = useSelector((state) => state.cart.searchData);
     // console.log(searchData);
-    
+
 
     const fetchData = async () => {
-           try {
-        let response = await fetch('https://dummyjson.com/products');
+        try {
+            let response = await fetch('https://dummyjson.com/products');
             let data = await response.json();
-            console.log(data);
             return setProduct(data?.products);
         }
         catch (error) {
             console.log(error.message)
         }
     }
+
+ useEffect(() => {
+    if (product.length > 0) {
+        dispatch(addAll(product));
+    }
+}, [product]);
 
 
     useEffect(() => {
@@ -35,40 +42,46 @@ function ProductHome(props) {
         dispatch(addToProduct(productData));
     }
 
+    const ViewDetails = (itemValue) => {
+        const id = itemValue.id;
+            navigate(`/product-detail/${id}`)
+
+    }
+
 
     return (
         <div className='container con'>
             <h2 className='text-center'>Product Home Page </h2>
             {/* <div style={{ boxShadow: "2px -2px 8px 1px black", margin: "10px 20%", padding: "12px", fontSize: "1.1rem", fontWeight: "bold", borderRadius: "8px" }}> */}
 
-                <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="radio" name="gender" id="all" value="All"
-                        checked={radioData === "All"} onChange={(e) => { setRadioData(e.target.value) }} />
-                    <label className="form-check-label" htmlFor="all">All</label>
-                </div>
-                <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="radio" name="gender" id="beauty" value="beauty"
-                        checked={radioData === "beauty"} onChange={(e) => { setRadioData(e.target.value) }}
-                    />
-                    <label className="form-check-label" htmlFor='beauty'>Beauty</label>
-                </div>
-                <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="radio" name="gender" id="fragrances" value="fragrances"
-                        checked={radioData === "fragrances"} onChange={(e) => { setRadioData(e.target.value) }} />
-                    <label className="form-check-label" htmlFor="fragrances">Fragrances</label>
-                </div>
-                <div className="form-check form-check-inline">
-                    <input className="form-check-input" type="radio" name="gender" id="groceries" value="groceries"
-                        checked={radioData === "groceries"} onChange={(e) => { setRadioData(e.target.value) }} />
-                    <label className="form-check-label" htmlFor="groceries">Groceries</label>
-                </div>
+            <div className="form-check form-check-inline">
+                <input className="form-check-input" type="radio" name="gender" id="all" value="All"
+                    checked={radioData === "All"} onChange={(e) => { setRadioData(e.target.value) }} />
+                <label className="form-check-label" htmlFor="all">All</label>
+            </div>
+            <div className="form-check form-check-inline">
+                <input className="form-check-input" type="radio" name="gender" id="beauty" value="beauty"
+                    checked={radioData === "beauty"} onChange={(e) => { setRadioData(e.target.value) }}
+                />
+                <label className="form-check-label" htmlFor='beauty'>Beauty</label>
+            </div>
+            <div className="form-check form-check-inline">
+                <input className="form-check-input" type="radio" name="gender" id="fragrances" value="fragrances"
+                    checked={radioData === "fragrances"} onChange={(e) => { setRadioData(e.target.value) }} />
+                <label className="form-check-label" htmlFor="fragrances">Fragrances</label>
+            </div>
+            <div className="form-check form-check-inline">
+                <input className="form-check-input" type="radio" name="gender" id="groceries" value="groceries"
+                    checked={radioData === "groceries"} onChange={(e) => { setRadioData(e.target.value) }} />
+                <label className="form-check-label" htmlFor="groceries">Groceries</label>
+            </div>
             {/* </div> */}
             <div className='row cart_row'>
-                {product.filter((values)=>{
-                    if(searchData.length === 0){
+                {product.filter((values) => {
+                    if (searchData.length === 0) {
                         return values;
                     }
-                    else{
+                    else {
                         return values.title.toLowerCase().includes(searchData.toLowerCase());
                     }
 
@@ -90,11 +103,14 @@ function ProductHome(props) {
                         <Card key={index} style={{ width: '16rem', height: "27rem" }} className='mx-2 mt-4 card_style'>
                             <Card.Img variant="top" src={itemValue.images[0]} style={{ height: "14rem" }} className='mt-3  img1' />
                             <Card.Body className='cart_body'>
-                                <Card.Title className='cart_category' style={{fontSize : "1rem"}}>{itemValue.category}</Card.Title>
-                                 <Card.Title className='cart_title' style={{fontSize : "1rem"}}>{itemValue.title}</Card.Title>
+                                <Card.Title className='cart_category' style={{ fontSize: "1rem" }}>{itemValue.category}</Card.Title>
+                                <Card.Title className='cart_title' style={{ fontSize: "1rem" }}>{itemValue.title}</Card.Title>
                                 <Card.Text> Price : ₹{itemValue.price} </Card.Text>
-                                <div className='cart_btn1'>
+                                <div className='cart_btn1 flex gap-2 justify-content-center'>
                                     <Button variant="danger" className='btn1' onClick={() => handleAddToCart(itemValue)}> Add To Cart </Button>
+
+
+                                    <Button variant="info" onClick={() => ViewDetails(itemValue)}>View  </Button>
                                 </div>
                             </Card.Body>
                         </Card>

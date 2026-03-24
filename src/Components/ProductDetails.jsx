@@ -13,32 +13,44 @@ import { addToProduct, deleteToProduct, removeToProduct } from "../Redux/Slices/
 
 function ProductDetails() {
     const { id } = useParams();
-    const [productData, setProductData] = useState([]);
+    const [productData, setProductData] = useState(null);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    let productDataValue = useSelector((state) => state.cart.cartData);
+    const cartData = useSelector((state) => state.cart.cartData);
+    const allProducts = useSelector((state) => state.product.productData);
 
     useEffect(() => {
-        let cartData = productDataValue.filter((value) => value.id === id);
-        setProductData(cartData);
-    }, [id, productDataValue]);
+        // find product from all products
+        const product = allProducts.find((item) => item.id == id);
+
+        // find if it exists in cart
+        const cartItem = cartData.find((item) => item.id == id);
+
+        if (product) {
+            setProductData({
+                ...product,
+                quantity: cartItem ? cartItem.quantity : 0
+            });
+        }
+    }, [id, cartData, allProducts]);
+
 
 
     // Remove To Product
-    const handleDelete = (productId)=>{
+    const handleDelete = (productId) => {
         dispatch(deleteToProduct(productId));
         navigate('/');
     }
 
     // Increment To Product
-    const handleIncrementProduct = (productData)=>{
+    const handleIncrementProduct = (productData) => {
         dispatch(addToProduct(productData));
     }
-    
+
     // Decrement To Product
-    const handleDecrementProduct = (productData)=>{
+    const handleDecrementProduct = (productData) => {
         dispatch(removeToProduct(productData));
     }
 
@@ -47,49 +59,68 @@ function ProductDetails() {
             <h2 className='text-center ' style={{ color: 'red' }}>Product Details</h2>
             <section className='container mt-3'>
                 <div className='iteamsdetails'>
-                    {
-                        productData.map((value, index) => {
-                            return (
-                                <>
-                                    <div className='items_img mt-2'>
-                                        <img src={value.images[0]} height="300px" alt='' />
-                                    </div>
-                                    <div className="details">
-                                        <Table>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <p> <strong>Category</strong> : {value.category}</p>
-                                                        <p> <strong>Price</strong> : {value.price} </p>
-                                                        <p> <strong>Title</strong> : {value.title}</p>
-                                                        <p> <strong>Total</strong> : ₹ {(value.price * value.quantity).toFixed(2)} </p>
-                                                        <div className='quantity_button'>
-                                                            <span style={{ fontSize: "24px" }} onClick={()=> handleIncrementProduct(value)}> <AddIcon /> </span>
+                    {productData && (
+                        <>
+                            <div className='items_img mt-2'>
+                                <img src={productData.images[0]} height="300px" alt='' />
+                            </div>
 
-                                                            <span style={{ fontSize: "20px" }}> {value.quantity} </span>
+                            <div className="details">
+                                <Table>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <p><strong>Category</strong> : {productData.category}</p>
+                                                <p><strong>Price</strong> : {productData.price}</p>
+                                                <p><strong>Title</strong> : {productData.title}</p>
+                                                <p>
+                                                    <strong>Total</strong> : ₹ {(productData.price * productData.quantity).toFixed(2)}
+                                                </p>
 
-                                                            <span style={{ fontSize: "24px" }} onClick={value.quantity == 1 ? ()=> handleDelete(value.id) : ()=> handleDecrementProduct(value) }> <RemoveIcon /> </span>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <p> <strong>Rating :</strong> <span className='rating_star'>{value.reviews[2].rating} ✰ </span> </p>
-                                                        <p> <strong>Order Review :</strong> <span>{value.rating.count} + order placed from here recently</span></p>
+                                                <div className='quantity_button'>
+                                                    <span onClick={() => handleIncrementProduct(productData)}>
+                                                        <AddIcon />
+                                                    </span>
 
-                                                        <p> <strong>Quantity :</strong> {value.quantity}</p>
+                                                    <span> {productData.quantity} </span>
 
-                                                        <p>
-                                                            {/* <i className='fas fa-trash largetrash' onClick={()=> handleDelete(value.id)}> </i> */}
-                                                            <button className="btn btn-outline-danger btn-md" onClick={()=> handleDelete(value.id)}> Remove <DeleteIcon/> </button>
-                                                        </p>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </>
-                            )
-                        })
-                    }
+                                                    <span
+                                                        onClick={
+                                                            productData.quantity <= 1
+                                                                ? () => handleDelete(productData.id)
+                                                                : () => handleDecrementProduct(productData)
+                                                        }
+                                                    >
+                                                        <RemoveIcon />
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <p>
+                                                    <strong>Rating :</strong>
+                                                    <span className='rating_star'>
+                                                        {productData.rating} ✰
+                                                    </span>
+                                                </p>
+
+                                                <p>
+                                                    <strong>Quantity :</strong> {productData.quantity}
+                                                </p>
+
+                                                <button
+                                                    className="btn btn-outline-danger btn-md"
+                                                    onClick={() => handleDelete(productData.id)}
+                                                >
+                                                    Remove <DeleteIcon />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </Table>
+                            </div>
+                        </>
+                    )}
                 </div>
             </section>
         </div>
