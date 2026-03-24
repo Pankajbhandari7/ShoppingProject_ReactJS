@@ -60,7 +60,7 @@ function HomeNav(props) {
                 <Container fluid>
                     <Navbar.Brand>
                         <img
-                            src="./public/vite.svg"
+                            src="../src/assets/vite.svg"
                             width="30"
                             height="30"
                             className="d-inline-block align-top"
