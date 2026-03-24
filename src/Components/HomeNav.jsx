@@ -10,6 +10,8 @@ import Menu from '@mui/material/Menu';
 import { useDispatch, useSelector } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 import { deleteToProduct, searchProductData } from '../Redux/Slices/ProductSlice';
+import viteLogo from '../assets/vite.svg';
+
 
 
 function HomeNav(props) {
@@ -59,13 +61,7 @@ function HomeNav(props) {
             <Navbar sticky="top" expand="lg" className="bg-body-tertiary">
                 <Container fluid>
                     <Navbar.Brand>
-                        <img
-                            src="../src/assets/vite.svg"
-                            width="30"
-                            height="30"
-                            className="d-inline-block align-top"
-                            alt="React Bootstrap logo"
-                        />
+                       <img src={viteLogo} alt="logo" />
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll">
